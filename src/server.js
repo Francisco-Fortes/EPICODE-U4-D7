@@ -8,6 +8,8 @@ import authorsRouter from "./authors/index.js";
 
 import blogsRouter from "./blogs/index.js";
 
+import createHttpError from "http-errors";
+
 import { notFound, forbidden, catchAllErrorHandler } from "./errorHandlers.js";
 
 import path, { dirname } from "path";
@@ -22,9 +24,26 @@ const publicDirectory = path.join(__dirname, "../public");
 
 const server = express();
 
-const PORT = 3001;
+//ENV VARIABLES console.log(process.env);
+const PORT = process.env.PORT;
 
-server.use(cors());
+//Adding options + whitelist [FEs]
+const whitelist = ["http://localhost:3001"];
+const corsOptions = {
+  origin: (origin, corsNext) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      //null means no error and true means that is going to be accepted
+      corsNext(null, true);
+    } else {
+      corsNext(createHttpError(400, `${origin} is not in the whitelist`));
+      //when origin is undefined means that you are not using a web browser
+      //you can pass through if you add Origin(Key) + Value
+    }
+  },
+};
+
+//Global Middleware
+server.use(cors(corsOptions));
 
 server.use(express.json());
 
