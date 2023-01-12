@@ -28,7 +28,7 @@ const server = express();
 const PORT = process.env.PORT;
 
 //Adding options + whitelist [FEs]
-const whitelist = ["http://localhost:3001"];
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
 const corsOptions = {
   origin: (origin, corsNext) => {
     if (whitelist.indexOf(origin) !== -1) {
